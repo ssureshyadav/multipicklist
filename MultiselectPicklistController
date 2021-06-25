@@ -1,0 +1,134 @@
+({
+    doInit: function(component,event,helper) {
+        var values=[];
+        var fieldValues=component.get("v.lstFieldValues");
+        if(component.get("v.FieldLabel") == "Jurisdiction"){
+            for(var i=0;i<fieldValues.length;i++){
+                values.push({"Id":fieldValues[i].Id,"Name":fieldValues[i].Name,"flag":false});
+            }
+        }else{
+            for(var i=0;i<fieldValues.length;i++){
+                values.push({"Id":fieldValues[i],"Name":fieldValues[i],"flag":false});
+            }
+        }
+        component.set("v.ColorList",values);
+    },
+    
+    OpenColorToggle:function(component,event,helper){
+        var action=component.find("droplist_color");
+        $A.util.removeClass(action,"slds-dropdown slds-dropdown--left slds-hide");
+        $A.util.addClass(action,"slds-dropdown slds-dropdown--left slds-show");
+    },
+    
+    HideColorToggle:function(component,event,helper){        
+        var action=component.find("droplist_color");
+        $A.util.removeClass(action,"slds-dropdown slds-dropdown--left slds-show");
+        $A.util.addClass(action,"slds-dropdown slds-dropdown--left slds-hide");
+        var ySelected=component.get("v.Selected");  
+        if(ySelected=="1"){
+            var arrColorID=new Array();           
+            var isColorSelect=false;                   
+            var ColorResult=JSON.parse(JSON.stringify(component.get("v.ColorList")));
+            if(ColorResult !=null){
+                for(var res in ColorResult){
+                    if(ColorResult[res].flag==true){
+                        arrColorID.push(ColorResult[res].Name);                       
+                    }
+                }                
+            }            
+        }
+    },
+    
+    ColorCheck:function(component, event, helper){
+        var ColorId=event.target.getAttribute('id'); 
+        var ColorList=component.get("v.ColorList");
+        component.set("v.SelectedAllColor",false);
+        var count=1;
+        var Colors=[];
+        for(var i in ColorList){
+            if(ColorList[i].Id==ColorId){
+                Colors.push({Id:ColorList[i].Id,Name:ColorList[i].Name,flag:true});                
+            }
+            else{
+                Colors.push({Id:ColorList[i].Id,Name:ColorList[i].Name,flag:ColorList[i].flag});    
+            }
+        }
+        
+        component.set("v.ColorList",Colors);     
+        var selectedvalues=[];
+        for(var a in Colors){
+            if(Colors[a].flag==true){
+                selectedvalues.push(Colors[a].Name);
+            }
+        }
+        console.log(selectedvalues);
+        component.set("v.selectedtooltip",selectedvalues.join(';'));
+        component.set("v.selectedValues",selectedvalues);
+        component.set("v.Selectedcount",selectedvalues.length);
+        var cmpBulkUpdateEvent = component.getEvent("cmpMiltiSelectUpdateEvent");
+        cmpBulkUpdateEvent.setParams({
+            "fieldAPI" : component.get("v.fieldAPI"),
+            "fieldValue" : selectedvalues,
+            });
+        cmpBulkUpdateEvent.fire();
+        
+        //alert(selectedvalues);
+    },
+    
+    ColorUnCheck:function(component, event, helper){
+        var ColorId=event.target.getAttribute('id'); 
+        var ColorList=component.get("v.ColorList");
+        component.set("v.SelectedAllColor",false);
+        var count=component.get("v.SelectedColor");        
+        var selectedpickvalue=[];
+        for(var i in ColorList){
+            if(ColorList[i].Id==ColorId){
+                selectedpickvalue.push({Id:ColorList[i].Id,Name:ColorList[i].Name,flag:false});  
+                count -=1;  
+            }
+            else{
+                selectedpickvalue.push({Id:ColorList[i].Id,Name:ColorList[i].Name,flag:ColorList[i].flag});                
+            }
+        }        
+        if(count==0){
+            component.set("v.SelectedColor",null);
+        }
+        else{
+            component.set("v.SelectedColor",count);
+        }
+        
+        component.set("v.ColorList",selectedpickvalue);
+        
+        var selectedvalues=[];
+        for(var a in selectedpickvalue){
+            if(selectedpickvalue[a].flag==true){
+                selectedvalues.push(selectedpickvalue[a].Name);
+            }
+        }
+        console.log(selectedvalues);
+        component.set("v.selectedtooltip",selectedvalues.join(';'));
+        component.set("v.selectedValues",selectedvalues);
+        component.set("v.Selectedcount",selectedvalues.length);
+        var cmpBulkUpdateEvent = component.getEvent("cmpMiltiSelectUpdateEvent");
+        cmpBulkUpdateEvent.setParams({
+            "fieldAPI" : component.get("v.fieldAPI"),
+            "fieldValue" : selectedvalues,
+            });
+        cmpBulkUpdateEvent.fire();
+        
+    },  
+    
+    showSelectedColor: function(component) {
+        var selectedColor=[];
+        var ColorList=component.get("v.ColorList");
+        for(var i in ColorList){           
+            if(ColorList[i].flag){
+                selectedColor.push(ColorList[i].Name);
+            }
+        }
+        if(selectedColor.length>0)
+        alert(JSON.stringify(selectedColor));  
+        else
+            alert('Please select color');
+    }, 
+ })
