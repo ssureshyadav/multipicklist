@@ -1,3 +1,23 @@
+<c:MultiSelectPicklist lstFieldValues="{!v.lstCountries}" FieldLabel="Jurisdiction" fieldAPI="Jurisdiction"/>
+<aura:handler name="cmpMiltiSelectUpdateEvent" event="c:cmpBulkUpdateEvent" action="{!c.handleComponentEvent}"/>
+
+handleComponentEvent : function(component, event, helper) {
+		var fieldAPI = event.getParam("fieldAPI");
+        var fieldValue = event.getParam("fieldValue");
+        console.log('fieldValue:::'+fieldValue);
+        component.set("v.selectedCountry",fieldValue);
+    },
+    
+<!-- cmpBulkUpdateEvent -->
+
+<aura:event type="COMPONENT">
+    <aura:attribute name="fieldAPI" type="String"/>
+    <aura:attribute name="fieldValue" type="String"/>
+    <aura:attribute name="fieldName" type="String"/>
+</aura:event>
+    
+    
+
 <aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" > 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
     <aura:attribute name="selectedValues" type="List"/>
